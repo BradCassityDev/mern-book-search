@@ -60,7 +60,7 @@ const resolvers = {
                 // Push new books to users savedBooks array
                 const updatedUser = await User.findOneAndUpdate(
                     { _id: context.user._id},
-                    { $push: { savedBooks: args }},
+                    { $push: { savedBooks: args.input }},
                     { new: true }
                 );
 
@@ -76,11 +76,13 @@ const resolvers = {
             // Check if the context contains a user object
             if (context.user) {
                 // Pull new book from users savedBooks array
-                const updatedUser = await user.findOneAndUpdate(
+                const updatedUser = await User.findByIdAndUpdate(
                     { _id: context.user._id },
-                    { $pull: { savedBooks: bookId }},
+                    { $pull: { savedBooks: { bookId: bookId } }},
                     { new: true }
                 );
+
+                return updatedUser;
             }
 
             // Throw an error if user is not logged in
